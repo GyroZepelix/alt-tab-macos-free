@@ -25,8 +25,8 @@ if [ -z "${CODE_SIGN_IDENTITY:-}" ]; then
   fi
 fi
 
-VERSION="${VERSION:-$(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//')}"
-[ -n "$VERSION" ] || VERSION="$(grep -m1 -oE '^#+ \[?[0-9]+\.[0-9]+\.[0-9]+' changelog.md | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')"
+VERSION="${VERSION:-$( (git describe --tags --abbrev=0 2>/dev/null || true) | sed 's/^v//')}"
+[ -n "$VERSION" ] || VERSION="$( (grep -m1 -oE '^#+ \[?[0-9]+\.[0-9]+\.[0-9]+' changelog.md || true) | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || true)"
 [ -n "$VERSION" ] || VERSION="0.0.0"
 
 echo "Building AltTab $VERSION (PRO_BUILD), signing with: $CODE_SIGN_IDENTITY"
