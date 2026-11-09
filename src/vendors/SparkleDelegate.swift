@@ -27,6 +27,16 @@ class SparkleDelegate: NSObject, SPUUpdaterDelegate {
         return Endpoints.appcastUrl
     }
 
+    #if PRO_BUILD
+    /// Fork: never check the official appcast. Installing an official update would replace this
+    /// self-built binary with the upstream one (and its Pro paywall). Update by rebuilding instead.
+    func updater(_ updater: SPUUpdater, mayPerform updateCheck: SPUUpdateCheck) throws {
+        throw NSError(domain: "AltTabFork", code: 1, userInfo: [
+            NSLocalizedDescriptionKey: "Updates are disabled in this self-built version. Rebuild from source to update.",
+        ])
+    }
+    #endif
+
     /// `day` is `LicenseManager.trialDay`, the same count the "Get Pro" links carry, so trial cohorts can be sized
     /// against purchases. A count rather than the start date: it changes every day, so unlike a date it doesn't
     /// single out one install across checks. Omitted when there is no trial start.

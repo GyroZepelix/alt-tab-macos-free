@@ -253,6 +253,10 @@ class LicenseManager {
     }
 
     func computeState() -> LicenseState {
+        #if PRO_BUILD
+        // Fork: self-built binaries unlock every Pro feature (GPL-3.0 source; see FORK.md).
+        return .pro
+        #else
         #if DEBUG
         if hasMockedLicense { return mockedTrialStartDate.map(trialState) ?? state }
         #endif
@@ -269,6 +273,7 @@ class LicenseManager {
             return .pro
         }
         return computeTrialState()
+        #endif
     }
 
     private func computeTrialState() -> LicenseState {

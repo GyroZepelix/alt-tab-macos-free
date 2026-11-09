@@ -1,0 +1,43 @@
+# Fork: build AltTab with PRO_BUILD (see FORK.md) and upload the .app as a workflow artifact.
+# Runs on pushes to the `free` branch; upstream's ci_cd.yml only runs on master, so it never fires here.
+name: Build free AltTab
+
+on:
+  push:
+    branches: [free]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    # Same image and Xcode as upstream's release pipeline (ci_cd.yml)
+    runs-on: xcode-27
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v6
+      - run: sudo xcode-select -s /Applications/Xcode_27.1.app/Contents/Developer
+      - run: xcodebuild -version
+      # Optional stable signing identity, so macOS keeps Accessibility / Screen Recording grants across
+      # rebuilds. Without these secrets the app is ad-hoc signed (permissions must be re-granted per build).
+      - name: Import signing certificate
+        env:
+          FREE_P12_CERTIFICATE: ${{ secrets.FREE_P12_CERTIFICATE }}
+          FREE_P12_PASSWORD: ${{ secrets.FREE_P12_PASSWORD }}
+        run: |
+          if [ -n "$FREE_P12_CERTIFICATE" ]; then
+            echo "$FREE_P12_CERTIFICATE" | base64 --decode > codesign.p12
+            scripts/codesign/import_certificate_into_new_keychain.sh codesign "$FREE_P12_PASSWORD"
+            # certificate CN must be "Local Self-Signed" (scripts/codesign/generate_selfsigned_certificate.sh)
+            echo "CODE_SIGN_IDENTITY=Local Self-Signed" >> "$GITHUB_ENV"
+          else
+            echo "No FREE_P12_CERTIFICATE secret, ad-hoc signing."
+          fi
+      - run: scripts/build_free.sh
+      - name: Package
+        run: ditto -c -k --keepParent DerivedData/Build/Products/Release/AltTab.app AltTab-free.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AltTab-free
+          path: AltTab-free.zip
+          retention-days: 30
