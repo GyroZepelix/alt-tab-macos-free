@@ -9,6 +9,8 @@ Last lint date: none
 | Input | Type | Source | Processed date | Output pages | Notes |
 | --- | --- | --- | --- | --- | --- |
 | `https://git.dgjalic.com/dgjalic/repo-wiki-template` | Protocol 2.2.1/schema-2 template installer | Forgejo repository | 2026-11-09 | `AGENTS.md`, `spec/`, `wiki/` | Installed lean repo wiki template. |
+| `ec4f94a8..4199f61d` | Commit range (fork delta on `free`) | git | 2026-11-09 | `wiki/fork-free-build.md` | Fork patch, build script, CI workflow. Not a full ingest. |
+| Window-switcher research session | Source reading, GitHub API, local AX probe | Session findings with URLs | 2026-11-09 | `wiki/window-switcher-research.md` | Third-party facts dated 2026-11-09. |
 
 ## Maintenance policy
 

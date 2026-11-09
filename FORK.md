@@ -27,3 +27,5 @@ git fetch upstream --tags
 git merge vX.Y.Z      # resolve conflicts in the two files above if any
 scripts/build_free.sh
 ```
+
+Full context (rationale, gotchas, research): [wiki/fork-free-build.md](wiki/fork-free-build.md)
